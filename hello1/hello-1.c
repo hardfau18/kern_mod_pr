@@ -1,5 +1,9 @@
 #include<linux/module.h>
 #include<linux/kernel.h>
+#include<linux/init.h>
+
+#define AUTHOR "hardfault"
+#define DESCRIPTION "module for testing"
 
 static int data[500] __initdata = {0,1};
 
@@ -15,3 +19,9 @@ static void __exit end_here(void){
 
 module_init(start_here);
 module_exit(end_here);
+
+MODULE_LICENSE("GPL");
+
+MODULE_AUTHOR(AUTHOR);
+MODULE_DESCRIPTION(DESCRIPTION);
+MODULE_SUPPORTED_DEVICE("TrashCan");
