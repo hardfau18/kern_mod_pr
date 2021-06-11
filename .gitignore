@@ -11,3 +11,5 @@ core
 *.mod
 modules.order
 *.symvers
+.cache
+compile_commands.json
