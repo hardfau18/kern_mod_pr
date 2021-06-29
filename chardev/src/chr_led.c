@@ -1,6 +1,11 @@
 #include "chr_led.h"
+#define DEVICE_NAME     "nameless"
+#define BUFF_LEN        100
+#define AUTHOR "hardfault"
+#define DESCRIPTION "module for testing"
 
 // initialize all buffers
+static int major_num;
 static char msg[BUFF_LEN];
 static int Device_open = 0;
 static char*  msg_ptr;
@@ -12,16 +17,6 @@ static struct file_operations fops = {
     .write = device_write 
 };
 
-int init_module(void) {
-    // get the major number
-    major_num = register_chrdev(0, DEVICE_NAME, &fops);
-    if (major_num < 0){
-        printk(KERN_ERR "hello : couldn't register device, return code is %d\n", major_num);
-        return major_num;
-    }
-    printk(KERN_INFO "hello : registered device - %d\n", major_num);
-    return 0;
-}
 
 static ssize_t device_read(struct file* f_read, char * dest, size_t size, loff_t* offset){
     // use put_user to write to user buffer
@@ -58,3 +53,27 @@ static int device_release(struct inode* inode, struct file* file){
     module_put(THIS_MODULE);
     return 0;
 }
+
+int init_module(void) {
+    // get the major number
+    major_num = register_chrdev(0, DEVICE_NAME, &fops);
+    if (major_num < 0){
+        printk(KERN_ERR "hello : couldn't register device, return code is %d\n", major_num);
+        return major_num;
+    }
+    printk(KERN_INFO "hello : registered device - %d\n", major_num);
+    return 0;
+}
+
+void cleanup_module(void)
+{
+    // unregister device
+    unregister_chrdev(major_num, DEVICE_NAME) ;
+    printk(KERN_INFO "hello: Good bye Satan\n");
+}
+
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR(AUTHOR);
+MODULE_DESCRIPTION(DESCRIPTION);
+MODULE_SUPPORTED_DEVICE("TrashCan");

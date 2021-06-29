@@ -1,6 +1,6 @@
 obj-m := hello.o  
 
-KERN_SRC=~/programs/sourcecode/linux-ti-staging
+KERN_SRC=~/playground/embedded/beaglebone/linux/ti-linux-kernel
 
 
 all:
