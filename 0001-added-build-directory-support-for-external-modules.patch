@@ -1,0 +1,60 @@
+From cb437a01272b7ae32394d2a7e57dad9e2d6feafe Mon Sep 17 00:00:00 2001
+From: hardfau18 <the.qu1rky.b1t@gmail.com>
+Date: Tue, 29 Jun 2021 18:51:13 +0530
+Subject: [PATCH] added build directory support for external modules
+
+---
+ scripts/Makefile.build   | 2 +-
+ scripts/Makefile.clean   | 2 +-
+ scripts/Makefile.modpost | 7 ++++---
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 4c058f12d..8afaab282 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -3,7 +3,7 @@
+ # Building
+ # ==========================================================================
+ 
+-src := $(obj)
++src := $(if $(KBUILD_EXTMOD_SRC),$(KBUILD_EXTMOD_SRC)$(patsubst $(KBUILD_EXTMOD)%,%,$(obj)),$(obj))
+ 
+ PHONY := __build
+ __build:
+diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+index d9e0ceace..f16c705a7 100644
+--- a/scripts/Makefile.clean
++++ b/scripts/Makefile.clean
+@@ -3,7 +3,7 @@
+ # Cleaning up
+ # ==========================================================================
+ 
+-src := $(obj)
++src := $(if $(KBUILD_EXTMOD_SRC),$(KBUILD_EXTMOD_SRC)$(patsubst $(KBUILD_EXTMOD)%,%,$(obj)),$(obj))
+ 
+ PHONY := __clean
+ __clean:
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index 12a87be0f..2152377c3 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -84,11 +84,12 @@ else
+ 
+ # set src + obj - they may be used in the modules's Makefile
+ obj := $(KBUILD_EXTMOD)
+-src := $(obj)
++src := $(if $(KBUILD_EXTMOD_SRC),$(KBUILD_EXTMOD_SRC),$(obj))
+ 
+ # Include the module's Makefile to find KBUILD_EXTRA_SYMBOLS
+-include $(if $(wildcard $(KBUILD_EXTMOD)/Kbuild), \
+-             $(KBUILD_EXTMOD)/Kbuild, $(KBUILD_EXTMOD)/Makefile)
++include $(if $(wildcard $(src)/Kbuild), \
++             $(src)/Kbuild, $(src)/Makefile)
++
+ 
+ # modpost option for external modules
+ MODPOST += -e
+-- 
+2.32.0
+
